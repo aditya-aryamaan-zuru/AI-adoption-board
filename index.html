@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Intern AI Adoption Board — ZURU</title>
+  <meta name="color-scheme" content="light dark">
+  <script>try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
+  <link rel="preload" href="/_zuru/kit/v1/geist-latin.woff2" as="font" type="font/woff2" crossorigin data-zuru-kit="v1">
+  <link rel="stylesheet" href="/_zuru/kit/v1/geist.css" data-zuru-kit="v1">
+  <style data-zuru-kit="v1">
+/* Warm neutrals + sidebar surface lifted verbatim from ZURU Deploy / Assets
+   (their app/globals.css). ZURU red replaces the apps' brand purple. */
+:root {
+  color-scheme: light;
+
+  --c-bg:          #ffffff;
+  --c-bg-subtle:   #f8f8f6;
+  --c-bg-hover:    #f2f1ee;
+  --c-border:      #e5e4e0;
+  --c-border-soft: #efeeea;
+  --c-text:        #1c1c1b;
+  --c-text-2:      #3d3c3a;
+  --c-text-muted:  #787774;
+  --c-text-faint:  #aaa9a5;
+  --c-sidebar:     #f7f8f8;
+  --c-elevated:    #ffffff;   /* cards, menus, modals */
+
+  /* ZURU red — accent, primary action, series 1 */
+  --c-brand:       #d6001c;
+  --c-brand-hover: #b30017;
+  --c-brand-light: #fdecee;   /* tint background */
+  --c-brand-text:  #a50016;   /* red text on a light tint */
+  --c-brand-on:    #ffffff;   /* text on a solid brand fill */
+
+  /* Status. --c-danger is deliberately NOT the brand red: a falling KPI must not
+     read as "branded", and red-on-red is unreadable as a signal. */
+  --c-ok:        #2c7a5c;  --c-ok-bg:     #eaf7f1;  --c-ok-line:     #a9efc5;
+  --c-warn:      #8a6100;  --c-warn-bg:   #fdf4e3;  --c-warn-line:   #fedf89;
+  --c-danger:    #b23a22;  --c-danger-bg: #fbeeea;  --c-danger-line: #f3c4b7;
+
+  /* Chart series. Each slot keeps its HUE in both themes — only luminance lifts —
+     so series 3 is amber on light and amber on dark. Never remap a slot to a
+     different colour family; toggling the theme would silently change what a
+     series means. */
+  --ch-1: #d6001c;  /* red    — primary / brand series */
+  --ch-2: #15b79e;  /* teal   */
+  --ch-3: #f79009;  /* amber  */
+  --ch-4: #534ab7;  /* purple — the ZURU app brand, as series 4 */
+  --ch-5: #2e90fa;  /* blue   */
+  --ch-6: #ff6b7a;  /* rose   */
+  --ch-7: #ee46bc;  /* magenta */
+  --ch-8: #697586;  /* slate  — "other" / residual buckets */
+
+  --sb: 220px;      /* sidebar width; the rail overrides it to 56px */
+  --r:   6px;       /* rows, tags, small controls */
+  --r-md: 8px;      /* cards, inputs, buttons */
+  --r-lg: 10px;     /* menus, modals */
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --c-bg:          #0d0d0d;
+  --c-bg-subtle:   #141414;
+  --c-bg-hover:    #1b1b1b;
+  --c-border:      #252629;
+  --c-border-soft: #1f1f1f;
+  --c-text:        #e5e7eb;
+  --c-text-2:      #c9cbd1;
+  --c-text-muted:  #9ca3af;
+  --c-text-faint:  #6b7280;
+  --c-sidebar:     #17181c;
+  --c-elevated:    #141414;
+
+  --c-brand:       #ff4d63;   /* #d6001c is only 2.6:1 on #0d0d0d — lifted to clear 3:1 */
+  --c-brand-hover: #ff6b7d;
+  --c-brand-light: #2e0008;
+  --c-brand-text:  #ff8a97;
+  --c-brand-on:    #160003;   /* dark ink on the lifted red; white would fail here */
+
+  --c-ok:        #41cb9b;  --c-ok-bg:     #0d2a20;  --c-ok-line:     #085d3a;
+  --c-warn:      #f0c04a;  --c-warn-bg:   #2e2412;  --c-warn-line:   #7a2e0e;
+  --c-danger:    #ef7b63;  --c-danger-bg: #2e1410;  --c-danger-line: #912018;
+
+  --ch-1: #ff4d63;
+  --ch-2: #2ed3b7;
+  --ch-3: #fdb022;
+  --ch-4: #7c73e0;
+  --ch-5: #53b1fd;
+  --ch-6: #ff9aa5;
+  --ch-7: #f670c7;
+  --ch-8: #9aa4b2;
+}
+html {
+  font-size: 13px;   /* matches Deploy / Assets — their whole scale assumes it */
+}
+body {
+  font-family: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--c-bg);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+}
+/* Every number a reader compares down a column or across a KPI row. */
+.kpi-value, .data-table td, .tnum { font-variant-numeric: tabular-nums; }
+/* ── base = phone. No sidebar in flow; it is an off-canvas drawer. ────────── */
+.app-shell { min-height: 100dvh; }
+
+.main {
+  padding: 60px 16px 32px;   /* 60px clears the fixed topbar */
+  min-width: 0;              /* lets wide tables scroll instead of blowing the grid out */
+}
+
+.topbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 40;
+  display: flex; align-items: center; gap: 10px;
+  height: 48px; padding: 0 12px;
+  background: var(--c-sidebar);
+  border-bottom: 1px solid var(--c-border);
+}
+.topbar-title {
+  font-size: 14px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.sidebar {
+  position: fixed; inset: 0 auto 0 0; z-index: 60;
+  width: min(86vw, 300px);
+  display: flex; flex-direction: column;
+  background: var(--c-sidebar);
+  border-right: 1px solid var(--c-border);
+  transform: translateX(-100%);          /* transform, not `left` — compositor-only */
+  transition: transform .22s ease;
+  overflow-y: auto;
+  overscroll-behavior: contain;          /* drawer scroll doesn't chain to the page */
+}
+.sidebar[data-open="true"] { transform: none; box-shadow: 0 0 40px rgb(0 0 0 / .25); }
+
+.scrim { position: fixed; inset: 0; z-index: 50; background: rgb(0 0 0 / .4); }
+
+/* ── desktop ──────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .topbar, .scrim { display: none; }
+
+  .app-shell { display: grid; grid-template-columns: var(--sb) 1fr; }
+  .app-shell[data-rail="true"] { --sb: 56px; }
+
+  .sidebar {
+    position: sticky; top: 0; z-index: 1;
+    height: 100dvh; width: auto;
+    transform: none; transition: none; box-shadow: none;
+    /* `.side-nav` does the scrolling here. */
+    overflow: visible;
+  }
+  .main { padding: 24px 24px 48px; }
+}
+
+@media (min-width: 1440px) {
+  .main { padding: 28px 32px 56px; }
+}
+
+/* Honour the setting; don't just shorten the animation. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+.kpi-row    { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 20px; }
+.chart-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 20px; }
+.chart-grid--full { grid-template-columns: 1fr; }
+
+@media (min-width: 768px) {
+  .kpi-row, .chart-grid { gap: 16px; }
+  .chart-grid--2-1 { grid-template-columns: 2fr 1fr; }   /* only meaningful with room */
+}
+.side-head-bar {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 48px; padding: 10px 8px; flex: none;   /* grows when the title wraps */
+  border-bottom: 1px solid var(--c-border);
+}
+.logo    { width: 42px; height: 20px; flex: none; }
+.logo-sm { width: 34px; height: 16px; flex: none; }
+.side-titles { flex: 1; min-width: 0; }
+/* Titles wrap to two lines, then clamp. A dashboard is named for what it is —
+   "Canada Ladder Plan — Inventory vs Forecast" — and an ellipsis after four words
+   hides the part that tells it apart from its siblings. */
+.side-name {
+  font-size: 13px; font-weight: 500; line-height: 1.25;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; overflow-wrap: anywhere;
+}
+.side-desc { padding: 10px 10px 2px; font-size: 12px; color: var(--c-text-muted); line-height: 1.45; }
+
+.side-nav { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
+/* Optional custom controls between the description and the nav (search, segmented). */
+.side-block { display: flex; flex-direction: column; gap: 8px; padding: 8px 8px 0; }
+.side-block .segmented { display: flex; }
+.side-block .seg { flex: 1; text-align: center; }
+.side-block .input { width: 100%; }
+
+/* The shared row. Identical geometry to Deploy/Assets `.side-item`. */
+.side-item {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; height: 28px; padding: 0 8px;
+  border: 0; background: none;
+  border-radius: var(--r);
+  font: inherit; font-size: 13px; font-weight: 450;
+  color: var(--c-text); text-align: left; text-decoration: none;
+  cursor: pointer;
+  transition: background 100ms;
+}
+.side-item:hover { background: color-mix(in srgb, var(--c-text) 6%, transparent); }
+.side-item[aria-current="page"],
+.side-item[data-active="true"] {
+  background: color-mix(in srgb, var(--c-text) 9%, transparent);
+  font-weight: 500;
+}
+/* The label fills the row and truncates. `:not(.switch)` matters — the toggle's
+   track is a <span> too, and this selector outranks its own `flex: none`, which
+   stretches the switch across the whole row. */
+.side-item > span:not(.switch) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-ico { color: var(--c-text-muted); flex: none; }
+.side-item[aria-current="page"] .side-ico { color: var(--c-text); }
+
+/* Section heading between groups of rows — the apps' `.side-head`. */
+.side-section {
+  display: flex; align-items: center; height: 24px; padding: 0 8px; margin-top: 12px;
+  font-size: 12px; font-weight: 500; color: var(--c-text-muted);
+}
+
+.side-foot { flex: none; border-top: 1px solid var(--c-border); padding: 8px; }
+.side-toggle { justify-content: space-between; color: var(--c-text-muted); }
+.side-meta { padding: 8px 8px 4px; font-size: 12px; color: var(--c-text-muted); line-height: 1.7; }
+.side-meta-h { font-weight: 500; color: var(--c-text); }
+
+.icon-btn {
+  display: grid; place-items: center; flex: none;
+  width: 28px; height: 28px; padding: 0;
+  border: 0; border-radius: var(--r);
+  background: none; color: var(--c-text-muted); cursor: pointer;
+}
+.icon-btn:hover { background: color-mix(in srgb, var(--c-text) 6%, transparent); color: var(--c-text); }
+
+/* iOS-style switch, built on a visually-hidden checkbox so it stays keyboard- and
+   screen-reader-operable. */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.switch { position: relative; width: 34px; height: 18px; flex: none; border-radius: 999px; background: var(--c-border); transition: background .18s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .3); transition: transform .18s; }
+.side-toggle input:checked ~ .switch { background: var(--c-brand); }
+.side-toggle input:checked ~ .switch::after { transform: translateX(16px); }
+.side-toggle input:focus-visible ~ .switch { outline: 2px solid var(--c-brand); outline-offset: 2px; }
+
+/* ── phone: the drawer needs finger-sized rows ── */
+@media (max-width: 767px) {
+  .side-item   { height: 40px; font-size: 14px; }
+  .side-rail-btn { display: none; }        /* the rail is a desktop idea */
+  .side-name, .side-desc { font-size: 14px; }
+}
+
+/* ── desktop rail (56px) ──
+   THE RAIL CONTRACT. What survives collapse: the header (reduced to the rail
+   button), nav rows that carry a `.side-ico`, and the theme switch. Everything
+   else hides — search boxes, segmented controls, tree rows without an icon,
+   badges, counts, chevrons, section heads, the description, footer text.
+   Real dashboards add all of those. The earlier rule hid only labels, which
+   left a 56px column of orphaned chevrons and inputs squeezed to one letter.
+   Corollary for authors: a sidebar whose rows have no icons collapses to just
+   the expand button — give the rows people navigate by an icon. */
+@media (min-width: 768px) {
+  [data-rail="true"] .sidebar > :not(.side-head-bar, .side-nav, .side-foot),
+  [data-rail="true"] .side-nav > :not(.side-item),
+  [data-rail="true"] .side-item:not(:has(> .side-ico)):not(.side-toggle),
+  [data-rail="true"] .side-item > :not(.side-ico, .switch, .sr-only),
+  [data-rail="true"] .side-foot > :not(.side-toggle),
+  [data-rail="true"] .side-titles,
+  [data-rail="true"] .logo { display: none; }
+
+  [data-rail="true"] .side-head-bar,
+  [data-rail="true"] .side-nav,
+  [data-rail="true"] .side-foot { padding-inline: 6px; }
+  [data-rail="true"] .side-head-bar { justify-content: center; }
+  [data-rail="true"] .side-item { justify-content: center; padding: 0; }
+  [data-rail="true"] .side-rail-btn { transform: rotate(180deg); }
+  /* No tooltip rules needed here: §5i's tooltip is a fixed element on <body>, so
+     it is never clipped by the rail or by `.side-nav`'s scrolling. */
+}
+.page-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.page-title { font-size: 20px; font-weight: 500; line-height: 1.25; }
+.page-sub { font-size: 12px; color: var(--c-text-muted); margin-top: 2px; }
+.page-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.segmented { display: inline-flex; padding: 2px; gap: 2px; background: var(--c-bg-hover); border: 1px solid var(--c-border); border-radius: var(--r-md); }
+.seg { padding: 4px 10px; border: 0; border-radius: var(--r); background: none; color: var(--c-text-muted); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--c-elevated); color: var(--c-text); box-shadow: 0 1px 2px rgb(0 0 0 / .06); }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border: 1px solid var(--c-border); border-radius: var(--r-md); background: var(--c-elevated); color: var(--c-text); font: inherit; font-size: 13px; font-weight: 450; cursor: pointer; }
+.btn:hover { background: var(--c-bg-hover); }
+.btn--primary { background: var(--c-brand); border-color: var(--c-brand); color: var(--c-brand-on); }
+.btn--primary:hover { background: var(--c-brand-hover); border-color: var(--c-brand-hover); }
+
+@media (min-width: 768px) {
+  .page-head { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+}
+/* On a phone the title also sits in the topbar — don't print it twice. */
+@media (max-width: 767px) { .page-title { display: none; } }
+.card { background: var(--c-elevated); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: 14px 16px; }
+
+.kpi { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kpi-label { font-size: 12px; color: var(--c-text-muted); }
+.kpi-value { font-size: 28px; font-weight: 600; line-height: 1.15; letter-spacing: -.01em; }
+.delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; flex-wrap: wrap; }
+.delta--up   { color: var(--c-ok); }
+.delta--down { color: var(--c-danger); }
+.delta-note  { color: var(--c-text-faint); font-weight: 400; }
+
+/* Optional sparkline — see §6 for why this is inline SVG and not a canvas. */
+.kpi-spark { width: 100%; height: 28px; margin-top: 2px; overflow: visible; }
+.kpi-spark path { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.chart { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--c-text-muted); }
+.chart-figure { font-size: 20px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+/* A fixed height is what makes maintainAspectRatio:false safe — without it Chart.js
+   and the flex parent can feed each other and grow without bound. */
+.chart-body { position: relative; height: 220px; }
+@media (min-width: 768px) { .chart-body { height: 260px; } }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; list-style: none; padding: 0; margin: 0; font-size: 12px; color: var(--c-text-muted); }
+.legend li { display: flex; align-items: center; gap: 6px; }
+.legend i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.table-card { padding: 0; overflow: hidden; }
+.table-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--c-border); }
+.table-title { font-size: 14px; font-weight: 500; }
+.pill { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: var(--c-brand-light); color: var(--c-brand-text); font-size: 11px; font-weight: 500; }
+.input { height: 30px; padding: 0 10px; border: 1px solid var(--c-border); border-radius: var(--r-md); background: var(--c-bg); color: var(--c-text); font: inherit; font-size: 13px; }
+.input::placeholder { color: var(--c-text-faint); }
+
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  padding: 8px 16px; text-align: left; white-space: nowrap;
+  font-size: 11px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--c-text-muted); background: var(--c-bg-subtle);
+  border-bottom: 1px solid var(--c-border);
+  position: sticky; top: 0; z-index: 1;      /* header survives a long scroll */
+}
+.data-table td { padding: 9px 16px; font-size: 13px; border-bottom: 1px solid var(--c-border-soft); }
+.data-table tr:last-child td { border-bottom: 0; }
+.data-table tbody tr:hover td { background: var(--c-bg-hover); }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Phone: keep the row's identity column pinned while the rest scrolls under it. */
+@media (max-width: 767px) {
+  .data-table th:first-child, .data-table td:first-child {
+    position: sticky; left: 0; z-index: 2;
+    background: var(--c-elevated);
+    box-shadow: 1px 0 0 var(--c-border-soft);
+  }
+  .data-table th:first-child { background: var(--c-bg-subtle); z-index: 3; }
+  .data-table th, .data-table td { padding-inline: 12px; }
+}
+.badge, .tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 500; white-space: nowrap;
+}
+.badge--ok      { background: var(--c-ok-bg);     color: var(--c-ok);     }
+.badge--warn    { background: var(--c-warn-bg);   color: var(--c-warn);   }
+.badge--danger  { background: var(--c-danger-bg); color: var(--c-danger); }
+.badge--neutral { background: var(--c-bg-hover);  color: var(--c-text-muted); border: 1px solid var(--c-border); }
+
+/* Category tags borrow chart slots, so a tag and its series match. */
+.tag { background: color-mix(in srgb, var(--tag, var(--ch-8)) 14%, transparent); color: var(--tag, var(--ch-8)); }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 16px; }
+.field { display: flex; flex-direction: column; gap: 4px; flex: 1 1 150px; min-width: 0; }
+.field-label { font-size: 11px; font-weight: 500; color: var(--c-text-muted); }
+.field .input { width: 100%; }
+@media (min-width: 768px) { .field { flex: 0 1 180px; } }
+.tip {
+  position: fixed; z-index: 380;
+  max-width: 260px;
+  padding: 5px 8px;
+  border: 1px solid var(--c-border);
+  border-radius: 5px;                    /* the house radius for floating surfaces */
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 12px; font-weight: 500; line-height: 1.375;
+  box-shadow: 0 8px 20px rgb(0 0 0 / .12);
+  pointer-events: none;
+  translate: 0 -50%;                     /* vertically centred on its row */
+}
+/* Anchored by its right edge when the outward side has no room. */
+.tip[data-flipped="true"] { translate: -100% -50%; }
+.tip-note { display: block; color: var(--c-text-muted); font-weight: 400; }
+.chart-svg { position: absolute; inset: 0; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 999; padding: 8px 12px; background: var(--c-elevated); border: 1px solid var(--c-border); border-radius: var(--r-md); }
+:where(a, button, input, select, [tabindex]):focus-visible { outline: 2px solid var(--c-brand); outline-offset: 2px; }
+.section-title { font-size: 15px; font-weight: 500; margin: 24px 0 12px; }
+  </style>
+  <link rel="stylesheet" href="/_zuru/kit/v1/tokens.css" data-zuru-kit="v1">
+  <style>
+    /* Dashboard-specific CSS only. Every colour comes from a kit token. */
+    *, *::before, *::after { box-sizing: border-box; }
+    body, h1, h2, h3, p, ul, ol { margin: 0; }
+    ul, ol { padding: 0; list-style: none; }
+    .main { max-width: 1280px; }
+    section { scroll-margin-top: 64px; }
+    .kpi-note { font-size: 12px; color: var(--c-text-muted); }
+    .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 20px; }
+    .card h3.card-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .card .card-sub { font-size: 12px; color: var(--c-text-muted); margin-bottom: 12px; }
+    /* My next step */
+    .me-card { border-color: var(--c-brand); }
+    .steps { display: flex; flex-direction: column; gap: 6px; }
+    .step { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: var(--r-md); }
+    .step[data-next="true"] { background: var(--c-brand-light); }
+    .step-dot { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--c-border); margin-top: 1px; }
+    .step[data-done="true"] .step-dot { background: var(--c-ok); border-color: var(--c-ok); color: var(--c-bg); }
+    .step[data-next="true"] .step-dot { border-color: var(--c-brand); }
+    .step-title { font-weight: 500; }
+    .step[data-done="true"] .step-title { color: var(--c-text-muted); }
+    .step-body { font-size: 12px; color: var(--c-text-2); margin-top: 2px; }
+    .prompt { display: flex; gap: 8px; align-items: center; margin-top: 8px; padding: 6px 6px 6px 10px; border: 1px solid var(--c-border); border-radius: var(--r-md); background: var(--c-elevated); }
+    .prompt code { flex: 1; min-width: 0; font: inherit; font-size: 12px; color: var(--c-text); overflow-wrap: anywhere; }
+    .prompt .btn { height: 26px; font-size: 12px; flex: none; }
+    .my-skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    /* Milestones */
+    .ms { display: grid; grid-template-columns: minmax(120px, 1.2fr) 2fr auto; gap: 6px 12px; align-items: center; }
+    .ms-label { font-size: 13px; }
+    .ms-track { display: block; height: 8px; border-radius: 999px; background: var(--c-bg-hover); overflow: hidden; }
+    .ms-fill { display: block; height: 100%; background: var(--c-brand); border-radius: 999px; }
+    .ms-val { font-size: 12px; color: var(--c-text-muted); text-align: right; white-space: nowrap; }
+    /* Popular skills */
+    .skill-row { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--c-border-soft); }
+    .skill-row:last-child { border-bottom: 0; }
+    .skill-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+    .skill-name { font-weight: 500; overflow-wrap: anywhere; }
+    .firsts li { display: flex; gap: 8px; padding: 6px 0; font-size: 13px; }
+    .firsts li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 7px; border-radius: 50%; background: var(--ch-2); }
+    .about dt { font-weight: 500; margin-top: 10px; }
+    .about dd { margin: 2px 0 0; color: var(--c-text-2); font-size: 12px; }
+    .state { padding: 16px; font-size: 13px; color: var(--c-text-muted); text-align: center; }
+    .muted { color: var(--c-text-muted); }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+```html
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="zuru" viewBox="0 0 107 51">
+    <path d="M101.766 51L6.72576 50.9535L0 10.483L106.69 0L101.762 51H101.766Z" fill="#D6001C"/>
+    <path d="M18.0674 24.746H26.2994L18.0635 33.4301V37.7528H33.683V33.2596H25.4704L33.683 24.5754V20.2566H18.0674V24.746Z" fill="#fff"/>
+    <path d="M84.0681 20.2566V30.0689C84.0681 32.1857 83.06 33.3061 81.1528 33.3061C79.2456 33.3061 78.2375 32.1159 78.2375 29.9487V20.2566H72.8779V30.0456C72.8779 35.2174 75.801 38.063 81.1022 38.063C86.4034 38.063 89.4276 35.1708 89.4276 29.9255V20.2605H84.0681V20.2566Z" fill="#fff"/>
+    <path d="M71.0212 26.3549V26.3045C71.0212 24.5831 70.4802 23.1913 69.4215 22.1717C68.1565 20.8962 66.2104 20.2527 63.6299 20.2527H55.2305V37.7412H60.5161V32.6005H62.2131L65.6811 37.7412H71.8191L67.6077 31.6739C69.8107 30.6426 71.0173 28.7624 71.0173 26.351L71.0212 26.3549ZM65.7122 26.5991V26.6495C65.7122 27.766 64.8754 28.4057 63.4119 28.4057H60.5239V24.8429H63.3886C64.4472 24.8429 65.7122 25.1492 65.7122 26.5991Z" fill="#fff"/>
+    <path d="M47.446 30.0689C47.446 32.1857 46.4379 33.3061 44.5307 33.3061C42.6235 33.3061 41.6154 32.1159 41.6154 29.9487V20.2566H36.2559V30.0456C36.2559 35.2174 39.1789 38.063 44.4801 38.063C49.7813 38.063 52.8056 35.1708 52.8056 29.9255V20.2605H47.446V30.0728V30.0689Z" fill="#fff"/>
+  </symbol>
+</svg>
+
+  </svg>
+
+  <header class="topbar">
+    <button class="icon-btn" id="navBtn" aria-expanded="false" aria-controls="sidebar" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <svg class="logo-sm" viewBox="0 0 107 51" aria-hidden="true"><use href="#zuru"/></svg>
+    <span class="topbar-title">Intern AI Adoption Board</span>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-head-bar">
+        <svg class="logo" viewBox="0 0 107 51" aria-hidden="true"><use href="#zuru"/></svg>
+        <div class="side-titles"><div class="side-name">Intern AI Adoption Board</div></div>
+        <button class="icon-btn side-rail-btn" id="railBtn" data-tip="Collapse sidebar" aria-label="Collapse sidebar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4v16M9 4L3 12l6 8"/></svg>
+        </button>
+      </div>
+      <p class="side-desc">How the 2026 NZ summer intern cohort is getting going with AI, and one thing to try next.</p>
+      <nav class="side-nav" aria-label="Dashboard sections">
+        <a class="side-item" href="#overview" aria-current="page" data-tip="Overview">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Overview</span></a>
+        <a class="side-item" href="#me" data-tip="My next step">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+          <span>My next step</span></a>
+        <div class="side-section">Cohort</div>
+        <a class="side-item" href="#milestones" data-tip="Milestones">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>
+          <span>Milestones</span></a>
+        <a class="side-item" href="#activity" data-tip="Daily activity">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <span>Daily activity</span></a>
+        <a class="side-item" href="#skills" data-tip="Popular skills">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>
+          <span>Popular skills</span></a>
+        <a class="side-item" href="#about" data-tip="About the data">
+          <svg class="side-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+          <span>About the data</span></a>
+      </nav>
+      <div class="side-foot">
+        <label class="side-item side-toggle">
+          <span id="themeLabel">Dark mode</span>
+          <input type="checkbox" id="themeBox" class="sr-only">
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <div class="side-meta">
+          <p class="side-meta-h">More information</p>
+          <p>Group AI Integration</p>
+          <p>Aditya Aryamaan</p>
+          <p>Version 1.0</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <section id="overview">
+        <header class="page-head">
+          <div>
+            <h1 class="page-title">How the intern cohort is getting on with AI</h1>
+            <p class="page-sub" id="sub">Loading live SkillHub activity…</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn" id="refreshBtn" data-tip="Reload the latest activity">Refresh</button>
+          </div>
+        </header>
+        <div class="kpi-row" id="kpis"><div class="card state">Loading…</div></div>
+      </section>
+
+      <section id="me">
+        <h2 class="section-title">My next step</h2>
+        <div class="card me-card" id="meCard"><div class="state">Working out where you are…</div></div>
+      </section>
+
+      <section id="milestones">
+        <h2 class="section-title">Cohort milestones</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title">Getting started, together</h3>
+            <p class="card-sub">Share of the cohort that has reached each step. The goal is everyone at every step.</p>
+            <div class="ms" id="msList"></div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">This week's firsts</h3>
+            <p class="card-sub">Last 7 days, counted across the cohort.</p>
+            <ul class="firsts" id="firsts"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="activity">
+        <h2 class="section-title">Daily activity</h2>
+        <div class="card chart">
+          <div class="chart-head">
+            <div>
+              <h3 class="eyebrow">Interns using a skill, per day</h3>
+              <p class="chart-figure" id="actFigure">–</p>
+            </div>
+          </div>
+          <div class="chart-body"><div id="actChart" class="chart-svg"></div></div>
+          <ul class="legend"><li><i style="background:var(--ch-1)"></i>Interns who used at least one SkillHub skill (UTC day)</li></ul>
+        </div>
+      </section>
+
+      <section id="skills">
+        <h2 class="section-title">Popular with interns</h2>
+        <div class="card">
+          <p class="card-sub">The skills the cohort is reaching for. Copy a prompt into a new Claude chat to try one.</p>
+          <div id="skillList"></div>
+        </div>
+      </section>
+
+      <section id="about">
+        <h2 class="section-title">About the data</h2>
+        <div class="card about">
+          <dl>
+            <dt>Who's in the cohort</dt>
+            <dd>The 45 NZ summer interns who started on 16 November 2026, from ZURU's people data.</dd>
+            <dt>What counts as using a skill</dt>
+            <dd>A SkillHub skill activated in Claude or WorkBuddy. Built-ins such as docx or xlsx aren't counted, and you only see skills you're allowed to see.</dd>
+            <dt>How fresh it is</dt>
+            <dd>Live: the page reads SkillHub as you each time it loads, so a skill used a minute ago shows up on refresh. Days are UTC.</dd>
+            <dt>"Not seen yet" isn't "didn't do it"</dt>
+            <dd>Work emails are still being set up for most interns, so activity is matched on the usual firstname.lastname@zuru.com address. If yours is different, it may not show yet. Tell the AI Integration team.</dd>
+            <dt>Privacy</dt>
+            <dd>The page shows cohort totals only. Your own steps are worked out in your browser from your own sign-in; nobody else's names are loaded.</dd>
+            <dt>Coming next</dt>
+            <dd>Tiers on the official AI ladder (T0–T7) once the cohort appears in the tier data, which runs a few days behind.</dd>
+          </dl>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <script data-zuru-kit="v1">
+/* .tip max-width + gap — decides which side of the row it fits on. */
+const TIP_ROOM = 276;
+const tipEl = document.createElement('div');
+tipEl.className = 'tip';
+tipEl.setAttribute('role', 'tooltip');
+tipEl.hidden = true;
+document.body.appendChild(tipEl);
+
+function showTip(target) {
+  const el = target instanceof Element ? target.closest('[data-tip]') : null;
+  const text = el && el.dataset.tip;
+  if (!text) { tipEl.hidden = true; return; }
+  const r = el.getBoundingClientRect();
+  tipEl.textContent = text;
+  if (el.dataset.tipNote) {
+    const note = document.createElement('span');
+    note.className = 'tip-note';
+    note.textContent = el.dataset.tipNote;
+    tipEl.appendChild(note);
+  }
+  /* Outward by default; inward when that edge is short of room. */
+  const flipped = r.right + TIP_ROOM > innerWidth;
+  tipEl.dataset.flipped = flipped;
+  tipEl.style.left = (flipped ? r.left - 8 : r.right + 8) + 'px';
+  /* Clamped so a row at the very top or bottom still shows its tooltip whole. */
+  tipEl.style.top = Math.min(Math.max(r.top + r.height / 2, 28), innerHeight - 28) + 'px';
+  tipEl.hidden = false;
+}
+const hideTip = () => { tipEl.hidden = true; };
+
+/* One listener for the document: a pointerover anywhere is both "entered this row"
+   and "left the last one", so showing and hiding are the same branch. */
+addEventListener('pointerover', e => { if (e.pointerType !== 'touch') showTip(e.target); });
+addEventListener('focusin', e => showTip(e.target));
+/* Coordinates are measured once, so anything that moves the row invalidates them. */
+addEventListener('focusout', hideTip);
+addEventListener('pointerdown', hideTip);
+addEventListener('scroll', hideTip, true);
+addEventListener('resize', hideTip);
+addEventListener('blur', hideTip);
+const shell = document.querySelector('.app-shell');
+const sidebar = document.getElementById('sidebar');
+const scrim = document.getElementById('scrim');
+const navBtn = document.getElementById('navBtn');
+
+/* Phone drawer */
+function setDrawer(open) {
+  sidebar.dataset.open = open;
+  scrim.hidden = !open;
+  navBtn.setAttribute('aria-expanded', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+  if (open) sidebar.querySelector('.side-item')?.focus();
+}
+navBtn.onclick = () => setDrawer(sidebar.dataset.open !== 'true');
+scrim.onclick = () => setDrawer(false);
+/* Tapping a nav row should navigate AND get out of the way. */
+sidebar.addEventListener('click', e => { if (e.target.closest('a.side-item')) setDrawer(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && sidebar.dataset.open === 'true') { setDrawer(false); navBtn.focus(); } });
+/* Crossing into desktop leaves the drawer state behind. */
+matchMedia('(min-width: 768px)').addEventListener('change', e => { if (e.matches) setDrawer(false); });
+
+/* Desktop rail */
+const railBtn = document.getElementById('railBtn');
+railBtn.onclick = () => {
+  const on = shell.dataset.rail !== 'true';
+  shell.dataset.rail = on;
+  railBtn.dataset.tip = on ? 'Expand sidebar' : 'Collapse sidebar';
+  railBtn.setAttribute('aria-label', railBtn.dataset.tip);
+  /* Charts resize themselves — each zChart host is under a ResizeObserver. If the
+     page also uses Chart.js, call `charts.forEach(c => c.resize())` here. */
+};
+addEventListener('keydown', e => {
+  if (e.key === '[' && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { e.preventDefault(); railBtn.click(); }
+});
+/* ── §6 charts — line, area, bar and donut in inline SVG ─────────────────────
+   Replaces Chart.js for the four types most ZURU dashboards actually draw.
+   Series colours are emitted as `var(--ch-N)` *references*, not resolved values,
+   so flipping the theme repaints every chart with no rebuild at all — the thing
+   the Chart.js path has to work around by destroying and recreating instances.
+   Reach for Chart.js (below) only for what this deliberately omits: stacked
+   series, dual axes, time scales, zoom/pan, dense scatter. */
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (n, a = {}) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const txt = (s, a) => { const t = mk('text', a); t.textContent = s; return t; };
+const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+const full = new Intl.NumberFormat('en');
+
+/* Axis steps of 1/2/5 x 10^n, so labels land on numbers a person would have picked. */
+function ticks(min, max, want = 4) {
+  const raw = ((max - min) || 1) / want;
+  const mag = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 5, 10].find(m => raw <= m * mag) * mag;
+  /* Round the domain OUT to whole steps at both ends. Stopping at the last step
+     below `max` leaves the top of the series drawn above the plot area. */
+  const hi = Math.ceil(max / step) * step;
+  const out = [];
+  for (let v = Math.floor(min / step) * step; v <= hi + step / 2; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+
+const PAD = { l: 38, r: 8, t: 10, b: 22 };
+
+function cartesian(svg, cfg, w, h) {
+  const { labels, series, type } = cfg;
+  const flat = series.flatMap(s => s.data);
+  const lo = type === 'bar' || cfg.beginAtZero ? Math.min(0, ...flat) : Math.min(...flat);
+  const ts = ticks(lo, Math.max(...flat));
+  const y0 = ts[0], y1 = ts[ts.length - 1];
+  const pw = w - PAD.l - PAD.r, ph = h - PAD.t - PAD.b;
+  const X = i => PAD.l + (labels.length < 2 ? pw / 2 : (i / (labels.length - 1)) * pw);
+  const Y = v => PAD.t + ((y1 - v) / (y1 - y0 || 1)) * ph;
+
+  for (const t of ts) {
+    svg.append(mk('line', { x1: PAD.l, x2: w - PAD.r, y1: Y(t), y2: Y(t), stroke: 'var(--c-border)', 'stroke-width': 1 }));
+    svg.append(txt(compact.format(t), { x: PAD.l - 7, y: Y(t) + 3.5, 'text-anchor': 'end', fill: 'var(--c-text-muted)', 'font-size': 11 }));
+  }
+
+  /* Drop x labels rather than rotate them — a 360px screen cannot take diagonal text. */
+  const every = Math.ceil(labels.length / Math.max(2, Math.floor(pw / 48)));
+  labels.forEach((l, i) => {
+    if (i % every) return;
+    /* First and last labels anchor inward — centred, they hang off the plot edge. */
+    const anchor = i === 0 ? 'start' : i === labels.length - 1 ? 'end' : 'middle';
+    svg.append(txt(l, { x: X(i), y: h - 6, 'text-anchor': anchor, fill: 'var(--c-text-muted)', 'font-size': 11 }));
+  });
+
+  if (type === 'bar') {
+    const band = pw / labels.length, bw = Math.max(2, (band * 0.6) / series.length);
+    series.forEach((s, si) => s.data.forEach((v, i) => svg.append(mk('rect', {
+      x: PAD.l + i * band + band / 2 - (bw * series.length) / 2 + si * bw,
+      y: Math.min(Y(v), Y(Math.max(y0, 0))), width: bw,
+      height: Math.abs(Y(v) - Y(Math.max(y0, 0))) || 1,
+      fill: `var(--ch-${s.slot})`, rx: 2,
+    }))));
+  } else {
+    series.forEach(s => {
+      const d = s.data.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+      if (s.fill) svg.append(mk('path', { d: `${d}L${X(s.data.length - 1).toFixed(1)},${Y(y0).toFixed(1)}L${X(0).toFixed(1)},${Y(y0).toFixed(1)}Z`, fill: `var(--ch-${s.slot})`, opacity: 0.14 }));
+      svg.append(mk('path', { d, fill: 'none', stroke: `var(--ch-${s.slot})`, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+    });
+  }
+
+  /* Hover: one guide line plus a marker per series, snapped to the nearest index. */
+  const guide = mk('line', { y1: PAD.t, y2: PAD.t + ph, stroke: 'var(--c-text-faint)', 'stroke-width': 1, opacity: 0 });
+  svg.append(guide);
+  const dots = series.map(s => {
+    const c = mk('circle', { r: 3.5, fill: `var(--ch-${s.slot})`, stroke: 'var(--c-bg)', 'stroke-width': 2, opacity: 0 });
+    svg.append(c); return c;
+  });
+  const hit = mk('rect', { x: PAD.l, y: PAD.t, width: pw, height: ph, fill: 'transparent' });
+  svg.append(hit);
+  hit.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    const r = svg.getBoundingClientRect();
+    const i = Math.max(0, Math.min(labels.length - 1, Math.round(((e.clientX - r.left - PAD.l) / pw) * (labels.length - 1))));
+    guide.setAttribute('x1', X(i)); guide.setAttribute('x2', X(i)); guide.setAttribute('opacity', 1);
+    dots.forEach((c, si) => { c.setAttribute('cx', X(i)); c.setAttribute('cy', Y(series[si].data[i])); c.setAttribute('opacity', 1); });
+    tipAt(r.left + X(i), r.top + PAD.t + ph / 2, labels[i],
+      series.map(s => `${s.label} ${full.format(s.data[i])}`).join('  ·  '));
+  });
+  hit.addEventListener('pointerleave', () => {
+    guide.setAttribute('opacity', 0); dots.forEach(c => c.setAttribute('opacity', 0)); hideTip();
+  });
+}
+
+function donut(svg, cfg, w, h) {
+  const total = cfg.series.reduce((a, s) => a + s.value, 0) || 1;
+  const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 4, r = R * 0.62;
+  let a0 = -Math.PI / 2;
+  cfg.series.forEach(s => {
+    const a1 = a0 + (s.value / total) * Math.PI * 2;
+    const big = a1 - a0 > Math.PI ? 1 : 0;
+    const pt = (ang, rad) => `${(cx + Math.cos(ang) * rad).toFixed(1)},${(cy + Math.sin(ang) * rad).toFixed(1)}`;
+    const p = mk('path', {
+      d: `M${pt(a0, R)}A${R},${R} 0 ${big} 1 ${pt(a1, R)}L${pt(a1, r)}A${r},${r} 0 ${big} 0 ${pt(a0, r)}Z`,
+      fill: `var(--ch-${s.slot})`,
+    });
+    const mid = (a0 + a1) / 2;
+    p.addEventListener('pointermove', e => tipAt(e.clientX, e.clientY, s.label,
+      `${full.format(s.value)}  ·  ${((s.value / total) * 100).toFixed(1)}%`));
+    p.addEventListener('pointerleave', hideTip);
+    svg.append(p);
+    a0 = a1;
+  });
+}
+
+/* Renders to the host's real pixel size, so text is never scaled out of shape.
+   Re-renders on resize, which is also how the sidebar rail collapse is handled. */
+function zChart(host, cfg) {
+  const paint = () => {
+    const { width: w, height: h } = host.getBoundingClientRect();
+    if (!w || !h) return;
+    host.textContent = '';
+    const svg = mk('svg', { width: '100%', height: '100%', viewBox: `0 0 ${w} ${h}`, role: 'img', 'aria-label': cfg.label || '' });
+    (cfg.type === 'donut' ? donut : cartesian)(svg, cfg, w, h);
+    host.append(svg);
+  };
+  new ResizeObserver(paint).observe(host);
+  return { paint };
+}
+const root = document.documentElement;
+const box = document.getElementById('themeBox');
+const media = matchMedia('(prefers-color-scheme: dark)');
+
+/* The ZURU apps store the same "theme" key, so a dashboard embedded in Deploy or
+   Assets inherits whatever the user already chose. Wrapped because artifact
+   sandboxes throw on storage access. */
+const store = {
+  get() { try { return localStorage.getItem('theme'); } catch { return null; } },
+  set(v) { try { localStorage.setItem('theme', v); } catch {} },
+};
+
+function applyTheme(dark, persist = true) {
+  root.classList.toggle('dark', dark);
+  box.checked = dark;
+  if (persist) store.set(dark ? 'dark' : 'light');
+  /* zChart repaints itself — its SVG holds `var(--ch-N)` references. Only a page
+     that also uses Chart.js needs: if (window.Chart && charts.length) buildCharts(); */
+}
+
+applyTheme(store.get() ? store.get() === 'dark' : media.matches, false);
+box.addEventListener('change', () => applyTheme(box.checked));
+/* Follow the OS only while the user hasn't expressed a preference. */
+media.addEventListener('change', e => { if (!store.get()) applyTheme(e.matches, false); });/* tipAt — positions the shared §5i tooltip at a point (used by zChart hover).
+   Hosted kit.js supplies its own on Deploy; this inline copy serves local preview. */
+function tipAt(x, y, title, note) {
+  tipEl.textContent = title;
+  if (note) { const n = document.createElement('span'); n.className = 'tip-note'; n.textContent = note; tipEl.appendChild(n); }
+  const flipped = x + TIP_ROOM > innerWidth;
+  tipEl.dataset.flipped = flipped;
+  tipEl.style.left = (flipped ? x - 8 : x + 8) + 'px';
+  tipEl.style.top = Math.min(Math.max(y, 28), innerHeight - 28) + 'px';
+  tipEl.hidden = false;
+}
+
+  </script>
+  <script type="module">
+    /* Intern AI Adoption Board v1 — reads SkillHub activity live, as the viewer.
+       Two governed queries per load (see queries.sql). Reads only; no connector writes. */
+    const START = '2026-11-16';
+    const QUICKSTART = 'zuru-ai-quickstart';
+
+    const runActivity = () => window.cowork.callMcpTool("query_sql", { sql: "WITH cohort AS ( SELECT e.employee_id, et.functional_team_id AS team, lower(replace(e.preferred_name, ' ', '') || '.' || replace(e.family_name, ' ', '')) || '@zuru.com' AS email FROM people.people.employees e JOIN people.people.locations l ON e.location_id = l.location_id LEFT JOIN people.people.employee_team et ON et.zuru_id = e.zuru_id WHERE e.is_intern = true AND l.country_code = 'NZL' AND e.hire_date = DATE '2026-11-16' ), acts AS ( SELECT c.email, a.day, a.skill_id, COUNT(*) AS n FROM ai_integration.skillhub.skill_activation_events a JOIN cohort c ON lower(a.actor_email) = c.email WHERE a.activated_at >= TIMESTAMP '2026-11-12 00:00:00' GROUP BY 1, 2, 3 ) SELECT encode(sha256(c.email), 'hex') AS k, c.team, CAST(x.day AS VARCHAR) AS d, s.name AS skill, x.n FROM cohort c LEFT JOIN acts x ON x.email = c.email LEFT JOIN ai_integration.skillhub.skills_catalog s ON s.skill_id = x.skill_id ORDER BY k, d" });
+
+    const runPrompts = () => window.cowork.callMcpTool("query_sql", { sql: "SELECT name, example_prompt FROM ai_integration.skillhub.skills_catalog WHERE name IN ('zuru-ai-quickstart', 'ask-zuru', 'explain-zuru-role', 'get-meeting-transcript', 'zuru-hr-knowledge-intl', 'ui-kit-documents', 'zuru-brand-guidelines', 'ask-about-ai-at-zuru') AND deleted_at IS NULL" });
+
+    /* Unwraps a governed query_sql envelope. Each SQL literal sits directly in its
+       callMcpTool call so Deploy's check_page can find and dry-run it. */
+    async function unwrap(envP) {
+      const env = await envP;
+      const data = JSON.parse(env.content[0].text);
+      if (data && data.error) throw new Error(data.error);
+      return { rows: (data && data.rows) || [] };
+    }
+
+    /* Curated intern-friendly prompts. These win over SkillHub's example prompts. */
+    const FALLBACK = {
+      'zuru-ai-quickstart': "I'm new to Claude at ZURU. Run the zuru-ai-quickstart skill with me.",
+      'ask-zuru': "Use the ask-zuru skill: I'm new at ZURU. Help me get started with the key policies, IT setup and who to ask.",
+      'explain-zuru-role': "What does my role at ZURU involve, and what do the people I'm meeting this week do?",
+      'get-meeting-transcript': "Find the transcript of my most recent meeting and list exactly what I agreed to do.",
+      'build-skill': "Help me turn a task I do every week into a skill, then show me how to publish it on SkillHub.",
+    };
+    const promptFor = (skill, prompts) =>
+      FALLBACK[skill] || prompts[skill] || `Activate the SkillHub skill "${skill}" and show me what it can do for my role.`;
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmtPct = (n, d) => d ? Math.round((n / d) * 100) + '%' : '–';
+    const iso = dt => dt.toISOString().slice(0, 10);
+    const addDays = (s, n) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return iso(d); };
+
+    /* Live on zuru.host; sample-data.json when previewed locally. */
+    let SAMPLE;
+    async function load(run, key) {
+      if (window.cowork && window.cowork.callMcpTool) return (await unwrap(run())).rows;
+      SAMPLE ??= await (await fetch('sample-data.json')).json();
+      return SAMPLE[key];
+    }
+    async function whoAmI() {
+      try { if (window.zuru && window.zuru.me) return (await window.zuru.me()).email; } catch {}
+      SAMPLE ??= await (await fetch('sample-data.json')).json();
+      return SAMPLE.me;
+    }
+    async function sha256(s) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    const denied = err => (window.zuru && window.zuru.isAccessDenied ? window.zuru.isAccessDenied(err) : err && err.status === 403);
+    const stateHtml = (err) => denied(err)
+      ? `<div class="state">You're signed in but don't have access to this data. Request access from the data team at <b>help@zuru.com</b>.</div>`
+      : `<div class="state">Couldn't load this: ${esc(err && err.message || err)}</div>`;
+
+    /* ── shape the rows into one record per intern ─────────────────────────── */
+    function model(rows, today) {
+      const wk = addDays(today, -6), prevStart = addDays(today, -13), prevEnd = addDays(today, -7);
+      const people = new Map();
+      for (const r of rows) {
+        if (!people.has(r.k)) people.set(r.k, { team: r.team, skills: new Set(), days: new Set(), skills7: new Set(), first: null, acts: [] });
+        if (!r.d || !r.skill) continue;
+        const p = people.get(r.k);
+        p.skills.add(r.skill); p.days.add(r.d); p.acts.push(r);
+        if (r.d >= wk) p.skills7.add(r.skill);
+        if (!p.first || r.d < p.first) p.first = r.d;
+      }
+      const all = [...people.values()];
+      const count = f => all.filter(f).length;
+      const inRange = (p, a, b) => [...p.days].some(d => d >= a && d <= b);
+      return {
+        people, all, wk,
+        cohort: all.length,
+        anySkill: count(p => p.skills.size > 0),
+        quick: count(p => p.skills.has(QUICKSTART)),
+        two: count(p => p.skills.size >= 2),
+        twoDays: count(p => p.days.size >= 2),
+        five: count(p => p.skills.size >= 5),
+        activeWk: count(p => inRange(p, wk, today)),
+        activePrev: count(p => inRange(p, prevStart, prevEnd)),
+        newWk: count(p => p.first && p.first >= wk),
+        quickWk: count(p => p.acts.some(a => a.skill === QUICKSTART && a.d >= wk)),
+        twoWk: count(p => p.skills7.size >= 2),
+      };
+    }
+
+    const arrowUp = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+    const arrowDown = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 7 17 17 7 17"/></svg>';
+
+    function renderKpis(m) {
+      const diff = m.activeWk - m.activePrev;
+      const firstWeek = iso(new Date()) < addDays(START, 7);
+      const delta = firstWeek ? `<span class="kpi-note">the cohort's first week</span>` : diff === 0 ? `<span class="kpi-note">same as the week before</span>`
+        : `<span class="delta ${diff > 0 ? 'delta--up' : 'delta--down'}">${diff > 0 ? arrowUp : arrowDown}${diff > 0 ? '+' : ''}${diff} <span class="delta-note">vs the week before</span></span>`;
+      const card = (label, value, note) => `<div class="card kpi"><span class="kpi-label">${label}</span><span class="kpi-value">${value}</span>${note}</div>`;
+      $('kpis').innerHTML = [
+        card('Interns using skills', `${m.anySkill}<span class="muted" style="font-size:15px;font-weight:500"> / ${m.cohort}</span>`, `<span class="kpi-note">${m.newWk ? `+${m.newWk} new this week` : fmtPct(m.anySkill, m.cohort) + ' of the cohort'}</span>`),
+        card('Ran the quickstart', m.quick, `<span class="kpi-note">${fmtPct(m.quick, m.cohort)} of the cohort</span>`),
+        card('Used 2+ different skills', m.two, `<span class="kpi-note">the skills step on the tier ladder</span>`),
+        card('Active this week', m.activeWk, delta),
+      ].join('');
+    }
+
+    function renderMilestones(m) {
+      const rows = [
+        ['Ran the quickstart', m.quick],
+        ['Used a skill', m.anySkill],
+        ['Used 2+ different skills', m.two],
+        ['Used skills on 2+ days', m.twoDays],
+        ['Used 5+ different skills', m.five],
+      ];
+      $('msList').innerHTML = rows.map(([l, v]) => `
+        <span class="ms-label">${l}</span>
+        <span class="ms-track" role="img" aria-label="${l}: ${v} of ${m.cohort}"><span class="ms-fill" style="width:${m.cohort ? (v / m.cohort) * 100 : 0}%"></span></span>
+        <span class="ms-val tnum">${v} / ${m.cohort}</span>`).join('');
+    }
+
+    function renderFirsts(m, top) {
+      const items = [];
+      if (m.newWk) items.push(`${m.newWk} intern${m.newWk > 1 ? 's' : ''} used their first skill`);
+      if (m.quickWk) items.push(`${m.quickWk} ran the quickstart`);
+      if (m.twoWk) items.push(`${m.twoWk} used two or more different skills`);
+      if (top) items.push(`Most-tried skill: <b>${esc(top.skill)}</b> (${top.n} interns)`);
+      $('firsts').innerHTML = items.length ? items.map(t => `<li><span>${t}</span></li>`).join('')
+        : `<li>Nothing yet this week. Be the first: try the quickstart below.</li>`;
+    }
+
+    function renderChart(m, today) {
+      const labels = [], data = [];
+      for (let d = START; d <= today; d = addDays(d, 1)) {
+        labels.push(new Date(d + 'T00:00:00Z').toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', timeZone: 'UTC' }));
+        data.push(m.all.filter(p => p.days.has(d)).length);
+      }
+      $('actFigure').textContent = `${m.activeWk} this week`;
+      $('actChart').textContent = '';
+      zChart($('actChart'), { type: 'bar', label: 'Interns using a skill per day', labels, series: [{ label: 'Interns', data, slot: 1 }] });
+    }
+
+    function topSkills(m) {
+      const by = new Map();
+      for (const p of m.all) for (const s of p.skills) by.set(s, (by.get(s) || 0) + 1);
+      return [...by].map(([skill, n]) => ({ skill, n })).sort((a, b) => b.n - a.n || a.skill.localeCompare(b.skill)).slice(0, 8);
+    }
+
+    const promptBox = text => `<div class="prompt"><code>${esc(text)}</code><button class="btn" data-copy="${esc(text)}">Copy</button></div>`;
+
+    function renderSkills(list, m, prompts) {
+      if (!list.length) { $('skillList').innerHTML = `<div class="state">No skills seen yet. The quickstart is the best place to start.</div>`; return; }
+      const max = list[0].n;
+      $('skillList').innerHTML = list.map(s => `
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">${esc(s.skill)}</span><span class="ms-val tnum">${s.n} intern${s.n > 1 ? 's' : ''}</span></div>
+          <span class="ms-track"><span class="ms-fill" style="width:${(s.n / max) * 100}%;background:var(--ch-2)"></span></span>
+          ${promptBox(promptFor(s.skill, prompts))}
+        </div>`).join('');
+    }
+
+    function renderMe(p, email, prompts) {
+      if (!p) {
+        $('meCard').innerHTML = `<div class="state">This card is for the 2026 NZ summer interns. You're viewing as ${esc(email || 'an unknown user')}, so you'll see the cohort view only.</div>`;
+        return;
+      }
+      const others = [...p.skills].filter(s => s !== QUICKSTART);
+      const steps = [
+        { t: 'Run the AI at ZURU quickstart', b: 'Eight short prompts that show what Claude can do with your calendar, ZURU data and skills.', done: p.skills.has(QUICKSTART), prompt: promptFor(QUICKSTART, prompts) },
+        { t: 'Use a skill for your own work', b: 'Skills are ready-made helpers on SkillHub. Ask one a real question from your day.', done: others.length > 0, prompt: promptFor('ask-zuru', prompts) },
+        { t: 'Use 2 different skills in a week', b: 'This is the skills step on the AI tier ladder (T4 is the ZURU baseline).', done: p.skills7.size >= 2, prompt: promptFor('explain-zuru-role', prompts) },
+        { t: 'Come back on another day', b: 'Use any skill on a second day. Habits beat sprints.', done: p.days.size >= 2, prompt: null },
+        { t: 'Build your own skill', b: 'Got a task you do every week? Turn it into a skill and share it on SkillHub.', done: false, prompt: FALLBACK['build-skill'] },
+      ];
+      const next = steps.findIndex(s => !s.done);
+      const tick = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      const doneN = steps.filter(s => s.done).length;
+      $('meCard').innerHTML = `
+        <h3 class="card-title">${doneN ? `You've done ${doneN} of ${steps.length - 1} starter steps` : "Let's get you started"}</h3>
+        <p class="card-sub">Your progress is worked out from your own SkillHub activity. Only you see this card.</p>
+        <ol class="steps">${steps.map((s, i) => `
+          <li class="step" data-done="${s.done}" data-next="${i === next}">
+            <span class="step-dot" aria-hidden="true">${s.done ? tick : ''}</span>
+            <div style="flex:1;min-width:0">
+              <div class="step-title">${s.done ? '<span class="sr-only">Done: </span>' : ''}${s.t}</div>
+              ${i === next ? `<div class="step-body">${s.b}</div>${s.prompt ? promptBox(s.prompt) : ''}` : ''}
+            </div>
+          </li>`).join('')}
+        </ol>
+        ${p.skills.size ? `<div class="my-skills"><span class="kpi-note">Your skills so far:</span>${[...p.skills].map(s => `<span class="tag" style="--tag: var(--ch-4)">${esc(s)}</span>`).join('')}</div>` : ''}`;
+    }
+
+    /* Copy buttons, one delegated listener. */
+    document.addEventListener('click', async e => {
+      const b = e.target.closest('[data-copy]');
+      if (!b) return;
+      try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; }
+      catch { b.textContent = 'Select & copy'; }
+      setTimeout(() => { b.textContent = 'Copy'; }, 1600);
+    });
+
+    /* ── load everything; both queries run in parallel ────────────────────── */
+    async function refresh() {
+      const today = iso(new Date());
+      const [actR, prR, email] = await Promise.allSettled([load(runActivity, 'activity'), load(runPrompts, 'prompts'), whoAmI()]);
+      const prompts = {};
+      if (prR.status === 'fulfilled') for (const r of prR.value) if (r.example_prompt) prompts[r.name] ??= r.example_prompt;
+
+      if (actR.status === 'rejected') {
+        for (const id of ['kpis', 'meCard', 'msList', 'skillList']) $(id).innerHTML = stateHtml(actR.reason);
+        $('sub').textContent = 'Live data unavailable';
+        return;
+      }
+      const m = model(actR.value || [], today);
+      if (!m.cohort) {
+        for (const id of ['kpis', 'meCard', 'msList', 'skillList']) $(id).innerHTML = `<div class="state">No data visible to you yet. If you expected to see the cohort, contact <b>help@zuru.com</b>.</div>`;
+        return;
+      }
+      const tops = topSkills(m);
+      renderKpis(m); renderMilestones(m); renderFirsts(m, tops[0]); renderChart(m, today); renderSkills(tops, m, prompts);
+      const me = email.status === 'fulfilled' && email.value ? m.people.get(await sha256(email.value.toLowerCase())) : null;
+      renderMe(me, email.value, prompts);
+      $('sub').textContent = `Live SkillHub activity for the ${m.cohort} NZ summer interns who started 16 Nov · updated ${new Date().toLocaleTimeString('en-NZ', { hour: 'numeric', minute: '2-digit' })}`;
+    }
+
+    $('refreshBtn').addEventListener('click', refresh);
+    /* Gentle auto-refresh while the tab is visible: data is live, so 10 minutes is plenty. */
+    setInterval(() => { if (document.visibilityState === 'visible') refresh(); }, 10 * 60 * 1000);
+    refresh();
+
+    /* Highlight the nav row for the section in view. */
+    const links = [...document.querySelectorAll('.side-nav a.side-item')];
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.getAttribute('href') === '#' + e.target.id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+    }), { rootMargin: '-40% 0px -55% 0px' });
+    document.querySelectorAll('main section').forEach(s => io.observe(s));
+
+    { /* Rail persistence (kit §5a) */
+      const railBtn = document.getElementById('railBtn'), shell = document.querySelector('.app-shell');
+      try { if (localStorage.getItem('zuru-rail') === '1' && shell.dataset.rail !== 'true') railBtn.click(); } catch {}
+      railBtn.addEventListener('click', () => { try { localStorage.setItem('zuru-rail', shell.dataset.rail === 'true' ? '1' : '0'); } catch {} });
+    }
+  </script>
+</body>
+</html>

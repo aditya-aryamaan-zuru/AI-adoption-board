@@ -1,0 +1,381 @@
+{
+ "_note": "FAKE sample data for offline preview only. Invented people.",
+ "me": "sample.intern@zuru.com",
+ "activity": [
+  {
+   "k": "171479e9a7b395bbda1b2cb50ddf642b37d9fd3aec67d88f273ecf895a889b02",
+   "team": "Social & Content Creative",
+   "d": "2026-11-16",
+   "skill": "ui-kit-documents",
+   "n": 1
+  },
+  {
+   "k": "02c63e2eb25343df28a6f982a8af0cba264d48580e383439ddc13ab4ce1913f6",
+   "team": "Group HR - International"
+  },
+  {
+   "k": "4c6022784da1119b42b0b06663a0350cf8eaa0e984c0830d7d54139f947a8111",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "bcd146571319fd61b278911a5e412acd602347c97f30c18b519403efd0ec505b",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-19",
+   "skill": "ui-kit-documents",
+   "n": 1
+  },
+  {
+   "k": "34af7658b5da4a7e035cb1ed15d02894e28947eb4f0c1fcd7ba79c2f54137a05",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-16",
+   "skill": "zuru-ai-quickstart",
+   "n": 1
+  },
+  {
+   "k": "34af7658b5da4a7e035cb1ed15d02894e28947eb4f0c1fcd7ba79c2f54137a05",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-20",
+   "skill": "get-meeting-transcript",
+   "n": 1
+  },
+  {
+   "k": "c83bc16586659c5967b94aac6b247307ed1d9a3d7f78836b52f05238baa017cc",
+   "team": "Group Brand Engagement"
+  },
+  {
+   "k": "e6a74754bf39ad331a605e1a2569913a70bcdb3f55ba1990b9000ef476c9c603",
+   "team": "Edge Commercial"
+  },
+  {
+   "k": "d9c40e2ca0d8393ed7a6492446b18697073c3259c53a5d699455d3776a0f6cba",
+   "team": "Edge Commercial"
+  },
+  {
+   "k": "f684185ad3defd55abb1def588a11509f12f17b5e52c346109062db5be4ef4bd",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-16",
+   "skill": "get-meeting-transcript",
+   "n": 3
+  },
+  {
+   "k": "e4a5426f36af24e33babc7b77a7f2d10a675a44aa0187df378486bc026de36f7",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "5913114d6a3ecd44e2a0a251df05d27a0a8774f2734e1e0dce1c5072a67cad02",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "get-meeting-transcript",
+   "n": 3
+  },
+  {
+   "k": "5913114d6a3ecd44e2a0a251df05d27a0a8774f2734e1e0dce1c5072a67cad02",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "ask-zuru",
+   "n": 3
+  },
+  {
+   "k": "5913114d6a3ecd44e2a0a251df05d27a0a8774f2734e1e0dce1c5072a67cad02",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "explain-zuru-role",
+   "n": 3
+  },
+  {
+   "k": "f2126e771a54b8cc20b552dd457220dbd5e5d24f3b9e58cb0f772a6f0ffc0f03",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-20",
+   "skill": "ui-kit-documents",
+   "n": 2
+  },
+  {
+   "k": "f2126e771a54b8cc20b552dd457220dbd5e5d24f3b9e58cb0f772a6f0ffc0f03",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-18",
+   "skill": "explain-zuru-role",
+   "n": 2
+  },
+  {
+   "k": "f2126e771a54b8cc20b552dd457220dbd5e5d24f3b9e58cb0f772a6f0ffc0f03",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-17",
+   "skill": "zuru-brand-guidelines",
+   "n": 1
+  },
+  {
+   "k": "f8fc1c4c50ff63f1cd5579f003cc9f596b4344566e43c0c5e1fa286285ce81d4",
+   "team": "Toys Commercial"
+  },
+  {
+   "k": "8d6d4c5c01a1ceda352aef564589d2c831a5ea5e982d0028e17231fe20eae4d2",
+   "team": "Edge Commercial"
+  },
+  {
+   "k": "9a3dc1b1aa600deaa4fa0d01ecef89de894cb903ae1c63aef33b107b285e83de",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-18",
+   "skill": "zuru-brand-guidelines",
+   "n": 3
+  },
+  {
+   "k": "9a3dc1b1aa600deaa4fa0d01ecef89de894cb903ae1c63aef33b107b285e83de",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-16",
+   "skill": "ui-kit-documents",
+   "n": 1
+  },
+  {
+   "k": "1a3f0c7fe8cd0cbb6bb4c8ad48d74b7136fa1e42695b98d9f2b855c534c69a9a",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-19",
+   "skill": "ask-zuru",
+   "n": 1
+  },
+  {
+   "k": "1a3f0c7fe8cd0cbb6bb4c8ad48d74b7136fa1e42695b98d9f2b855c534c69a9a",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-16",
+   "skill": "ui-kit-documents",
+   "n": 3
+  },
+  {
+   "k": "fe4ab2828ce5903378e681314112033408e9eeff0a969da39c38479b5a4fc6d3",
+   "team": "Group Brand Engagement"
+  },
+  {
+   "k": "83eb71cd5d10a317bed8be468b88347f89ad63516db1ae6a650f41a843728bdf",
+   "team": "Group HR - International",
+   "d": "2026-11-20",
+   "skill": "explain-zuru-role",
+   "n": 2
+  },
+  {
+   "k": "83eb71cd5d10a317bed8be468b88347f89ad63516db1ae6a650f41a843728bdf",
+   "team": "Group HR - International",
+   "d": "2026-11-16",
+   "skill": "get-meeting-transcript",
+   "n": 1
+  },
+  {
+   "k": "83eb71cd5d10a317bed8be468b88347f89ad63516db1ae6a650f41a843728bdf",
+   "team": "Group HR - International",
+   "d": "2026-11-18",
+   "skill": "ui-kit-documents",
+   "n": 2
+  },
+  {
+   "k": "c3788690ee9a9159eb5746817d3a84b1c4beee1cc7da463b52de427dc5546b91",
+   "team": "Toys Commercial"
+  },
+  {
+   "k": "65a28cf9830ff8e0ac7b9ae3de058921cb194d7fc5900880a789ba28251f08d5",
+   "team": "Edge Commercial"
+  },
+  {
+   "k": "7c67eb9e928cca5628a3bacad1637257dee4905c007eb35b3fb26a01148d8e9f",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "40322578e1df912e836f2d93ff6fc01b47605e60fe48d6549cf3f1c6f2a2148c",
+   "team": "Toys Commercial"
+  },
+  {
+   "k": "3a0681d9a3262d33032b7354951cbc26a0ba58cfc2c5fd8acfd0f3f5a26a9ce7",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "4c3bffb6f1f54188d24e4c8e626a038e684fd0f691a7aab68f2ed182dc5f26f2",
+   "team": "Toys Commercial",
+   "d": "2026-11-20",
+   "skill": "explain-zuru-role",
+   "n": 1
+  },
+  {
+   "k": "4c3bffb6f1f54188d24e4c8e626a038e684fd0f691a7aab68f2ed182dc5f26f2",
+   "team": "Toys Commercial",
+   "d": "2026-11-19",
+   "skill": "ask-zuru",
+   "n": 1
+  },
+  {
+   "k": "6b95a80a933120798428b4af4a763c9388cb904c22525ebcc214bb2ef8926cef",
+   "team": "Toys Global Marketing"
+  },
+  {
+   "k": "09110e0abfd2dcf3356f31f18e47e9c5d6fe56ea84e8819f6e8208fea8ae0eae",
+   "team": "Toys Global Marketing"
+  },
+  {
+   "k": "051c4bcc66627f6458bfd2d3339d4f81870fd6cf71a63b0ffef39b64a33ccff4",
+   "team": "Group Digital",
+   "d": "2026-11-19",
+   "skill": "zuru-ai-quickstart",
+   "n": 2
+  },
+  {
+   "k": "051c4bcc66627f6458bfd2d3339d4f81870fd6cf71a63b0ffef39b64a33ccff4",
+   "team": "Group Digital",
+   "d": "2026-11-20",
+   "skill": "ask-zuru",
+   "n": 2
+  },
+  {
+   "k": "6b0dfd2df7b2f8d5a8dcf57c736419501781158e4077dba2a587839b7c31130c",
+   "team": "Toys Global Marketing"
+  },
+  {
+   "k": "7a49fc70f9f7dc52384d5431d9bd21d996f9375b4e50e8db4fd7b25223195606",
+   "team": "Group HR - International"
+  },
+  {
+   "k": "c1476bbfd1a0a52264cb38276fda8d6f1865731d78948b08ca3f2d0022e25a3c",
+   "team": "Toys Commercial",
+   "d": "2026-11-17",
+   "skill": "zuru-brand-guidelines",
+   "n": 1
+  },
+  {
+   "k": "c1476bbfd1a0a52264cb38276fda8d6f1865731d78948b08ca3f2d0022e25a3c",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "ui-kit-documents",
+   "n": 1
+  },
+  {
+   "k": "62f94d6a353fc7c6bc1e7a172efccc76bca7c61ea1b59cf6f715bd6bd7e08d3c",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-19",
+   "skill": "zuru-ai-quickstart",
+   "n": 3
+  },
+  {
+   "k": "2234966618a9adf94d43cc065a3763e06caeba24ef42cf831dc566bc71a7a46a",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-19",
+   "skill": "ask-zuru",
+   "n": 3
+  },
+  {
+   "k": "49e0d879f98a88b1c7064d358568be0211d210ad111e6bc6e8ff69648419c297",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "98c3c2bf51197b74e32f34e488c5dc76bd1d0e812b20fa664f3edb39b1bbd103",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "35c1fd892b8727108d196f5eaa4b480b37f0da6aebb120657cfa4302fe740f5c",
+   "team": "Toys Commercial"
+  },
+  {
+   "k": "81747eae4e2cbacbcd39386d243284c117d5ef134b91ea1cc62b1b4611799973",
+   "team": "Group Brand Engagement"
+  },
+  {
+   "k": "3612fafbba30f15575b64f151c092396d71bd980eea2d8e924a38b6e1675e816",
+   "team": "Toys Commercial",
+   "d": "2026-11-19",
+   "skill": "get-meeting-transcript",
+   "n": 2
+  },
+  {
+   "k": "3612fafbba30f15575b64f151c092396d71bd980eea2d8e924a38b6e1675e816",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "ui-kit-documents",
+   "n": 2
+  },
+  {
+   "k": "3612fafbba30f15575b64f151c092396d71bd980eea2d8e924a38b6e1675e816",
+   "team": "Toys Commercial",
+   "d": "2026-11-19",
+   "skill": "zuru-brand-guidelines",
+   "n": 1
+  },
+  {
+   "k": "7aa7f8471619c6998407d06a84785d7aa273732ea402cf68df6bc0c954c26d83",
+   "team": "Toys Global Marketing",
+   "d": "2026-11-17",
+   "skill": "ui-kit-documents",
+   "n": 1
+  },
+  {
+   "k": "81a4cab1ed30cdb204e3feb860242f0337d7e798a60f9aa2a28e500c6ee672dd",
+   "team": "Social & Content Creative"
+  },
+  {
+   "k": "089f16d6e051bdedc6e22b43a6f2cd0d63aed13e8f10f0dfbebf1a454c433c8b",
+   "team": "Edge Commercial",
+   "d": "2026-11-16",
+   "skill": "get-meeting-transcript",
+   "n": 2
+  },
+  {
+   "k": "7a45f5a8231f5082047ba8d66037ff27c42df7177197f89c0c50d021660b329b",
+   "team": "Group Brand Engagement",
+   "d": "2026-11-19",
+   "skill": "get-meeting-transcript",
+   "n": 1
+  },
+  {
+   "k": "a1635eee8b290cd4cee63305b4e82b7ce2c6ea1aedf829953294e4f11311d341",
+   "team": "Toys Commercial",
+   "d": "2026-11-19",
+   "skill": "get-meeting-transcript",
+   "n": 1
+  },
+  {
+   "k": "a1635eee8b290cd4cee63305b4e82b7ce2c6ea1aedf829953294e4f11311d341",
+   "team": "Toys Commercial",
+   "d": "2026-11-16",
+   "skill": "explain-zuru-role",
+   "n": 2
+  },
+  {
+   "k": "545c055b114a8920893ccaca863b18877df3292eb2233d449b399c8ce2fd5a66",
+   "team": "Group Digital",
+   "d": "2026-11-16",
+   "skill": "zuru-ai-quickstart",
+   "n": 3
+  },
+  {
+   "k": "545c055b114a8920893ccaca863b18877df3292eb2233d449b399c8ce2fd5a66",
+   "team": "Group Digital",
+   "d": "2026-11-18",
+   "skill": "ask-zuru",
+   "n": 3
+  },
+  {
+   "k": "bcd84d7bebad75f942b0980a9c02415f1677aa8f40b79921b465bbbf5b1f4a44",
+   "team": "Social & Content Creative",
+   "d": "2026-11-17",
+   "skill": "ask-zuru",
+   "n": 3
+  },
+  {
+   "k": "bcd84d7bebad75f942b0980a9c02415f1677aa8f40b79921b465bbbf5b1f4a44",
+   "team": "Social & Content Creative",
+   "d": "2026-11-18",
+   "skill": "get-meeting-transcript",
+   "n": 1
+  },
+  {
+   "k": "bcd84d7bebad75f942b0980a9c02415f1677aa8f40b79921b465bbbf5b1f4a44",
+   "team": "Social & Content Creative",
+   "d": "2026-11-20",
+   "skill": "zuru-ai-quickstart",
+   "n": 1
+  },
+  {
+   "k": "03ff82b30628408e9e8d50813ed5406f2b4b8b0f88ee495e739d9145980d383f",
+   "team": "Group HR - International"
+  }
+ ],
+ "prompts": [
+  {
+   "name": "zuru-ai-quickstart",
+   "example_prompt": "I'm new to Claude at ZURU. Run the zuru-ai-quickstart skill with me."
+  }
+ ]
+}
